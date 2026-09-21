@@ -1,10 +1,6 @@
 #!/usr/bin/env escript
 %%! -smp enable
 
-%% WORKER:  ./worker <ServerIP>
-%% Connects to the server, mines for it. Prints nothing when a coin is found;
-%% the server prints and logs everything, tagged with this node's name.
-
 -define(GATORLINK, "d.surana").   %% must match the server's
 -define(COOKIE, cop5615).
 
@@ -30,8 +26,6 @@ main([ServerIp]) ->
             halt(1)
     end.
 
-%% Identical to the server's worker actor -- sending to {boss, Node} works
-%% exactly like sending to a local process.
 worker(Boss) ->
     Boss ! {work, self()},
     receive

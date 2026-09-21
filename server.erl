@@ -1,18 +1,11 @@
 #!/usr/bin/env escript
 %%! -smp enable
 
-%% SERVER:  ./server <K>
-%% Mines locally on all cores and accepts remote workers.
-%% All coins found (local or remote) are printed here and logged to
-%% coins.log, tagged with the node that found them. Every 20s it also
-%% prints a summary of how many chunks each node has been given, so you
-%% can directly see whether remote workers are contributing.
-
 -define(GATORLINK, "d.surana").
 -define(CHUNK, 100).
 -define(COOKIE, cop5615).
 -define(LOGFILE, "coins.log").
--define(STATS_INTERVAL, 20000).  %% ms between per-node stats prints
+-define(STATS_INTERVAL, 20000).  
 
 main([Arg]) ->
     application:start(crypto),
@@ -38,8 +31,6 @@ main([Arg]) ->
 
     timer:sleep(infinity).
 
-%% Boss actor: hands out nonce ranges, prints/logs coins tagged by the
-%% node that found them, and periodically reports chunks served per node.
 boss(K, Next, Counts) ->
     receive
         {work, From} ->
@@ -63,7 +54,6 @@ boss(K, Next, Counts) ->
             boss(K, Next, Counts)
     end.
 
-%% Worker actor: ask for a range, mine it, repeat.
 worker(Boss) ->
     Boss ! {work, self()},
     receive
